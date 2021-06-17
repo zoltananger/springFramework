@@ -1,0 +1,6 @@
+hu\angerz\framework\RootConfiguration.class
+hu\angerz\framework\AppConfig.class
+hu\angerz\framework\controllers\testController.class
+hu\angerz\framework\controllers\testRestController.class
+hu\angerz\framework\configs\WebConfig.class
+hu\angerz\framework\configs\WebAppInitializer.class
