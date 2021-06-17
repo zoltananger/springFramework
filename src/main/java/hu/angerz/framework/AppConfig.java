@@ -25,6 +25,7 @@ public class AppConfig {
 
     @Autowired
     private Environment environment;
+    //test
 
 //    @Bean
 //    public JpaTransactionManager transactionManager() {
