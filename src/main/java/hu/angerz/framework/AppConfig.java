@@ -1,9 +1,8 @@
 package hu.angerz.framework;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -18,50 +17,53 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:/application.properties")
+@PropertySources({
+        @PropertySource("classpath:/application.properties"),
+        @PropertySource(value = "classpath:/application-${spring.profiles.active}.properties", ignoreResourceNotFound = true)
+})
 @EnableTransactionManagement
-//@EnableJpaRepositories(basePackages = "gascapacities.backend")
+@EnableJpaRepositories(basePackages = "hu.angerz.framework")
 public class AppConfig {
 
     @Autowired
     private Environment environment;
-    //test
+    @Autowired
+    private ConfigurableEnvironment configurableEnvironment;
 
-//    @Bean
-//    public JpaTransactionManager transactionManager() {
-////        JpaTransactionManager transactionManager = new JpaTransactionManager();
-////        transactionManager.setEntityManagerFactory(entityManagerFactory(dataSource()).getObject() );
-////        return transactionManager;
-//        return new JpaTransactionManager();
-//    }
 
-//    @Bean
-//    public JpaVendorAdapter jpaVendorAdapter() {
-//        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
-//        hibernateJpaVendorAdapter.setShowSql(true);
-//        return hibernateJpaVendorAdapter;
-//    }
+    @Bean
+    public JpaTransactionManager transactionManager() {
+//        JpaTransactionManager transactionManager = new JpaTransactionManager();
+//        transactionManager.setEntityManagerFactory(entityManagerFactory(dataSource()).getObject() );
+//        return transactionManager;
+        return new JpaTransactionManager();
+    }
 
-//    @Bean
-//    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
-//        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-//        entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter());
-//        entityManagerFactoryBean.setDataSource(dataSource());
-//        entityManagerFactoryBean.setPackagesToScan("gascapacities.backend");
-//        return entityManagerFactoryBean;
-//    }
+    @Bean
+    public JpaVendorAdapter jpaVendorAdapter() {
+        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
+        hibernateJpaVendorAdapter.setShowSql(true);
+        return hibernateJpaVendorAdapter;
+    }
 
-//    @Bean
-//    public DataSource dataSource() {
-////        MysqlDataSource dataSource = new MysqlDataSource();
-////        dataSource.setURL(environment.getProperty("jdbc.url"));
-////        dataSource.setUser(environment.getProperty("jdbc.username"));
-////        dataSource.setPassword(environment.getProperty("jdbc.password"));
-//
-//        DriverManagerDataSource dataSource = new DriverManagerDataSource(environment.getProperty("jdbc.url"), environment.getProperty("jdbc.username"), environment.getProperty("jdbc.password"));
-//        dataSource.setDriverClassName("org.postgresql.Driver");
-//        return dataSource;
-//    }
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+        entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter());
+        entityManagerFactoryBean.setDataSource(dataSource());
+        entityManagerFactoryBean.setPackagesToScan("hu.angerz.framework.backend");
+        return entityManagerFactoryBean;
+    }
+
+    @Bean
+    public DataSource dataSource() {
+
+        DriverManagerDataSource dataSource = new DriverManagerDataSource(environment.getProperty("jdbc.url"), environment.getProperty("jdbc.username"), environment.getProperty("jdbc.password"));
+        dataSource.setDriverClassName(environment.getProperty("jdbc.driver-class"));
+        return dataSource;
+    }
+
+
 
 //    @Bean
 //    public PasswordEncoder passwordEncoder() {
